@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Leaders Directory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF3F0; --surface:#FFFFFF; --ink:#16302B; --muted:#586E67; --line:#D2DED9;
+  --brand:#14463E; --on-brand:#F1F7F4; --gold:#F0B429; --chip:#DDEAE5; --danger:#B3261E;
+  --av-l:84%; --av-ink-l:24%;
+  --display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1C1A; --surface:#172A27; --ink:#E6F0EC; --muted:#9DB5AD; --line:#2A413C;
+    --brand:#8FD8C5; --on-brand:#0F2420; --chip:#1F3733; --danger:#FF8A80; --av-l:30%; --av-ink-l:86%;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1C1A; --surface:#172A27; --ink:#E6F0EC; --muted:#9DB5AD; --line:#2A413C;
+  --brand:#8FD8C5; --on-brand:#0F2420; --chip:#1F3733; --danger:#FF8A80; --av-l:30%; --av-ink-l:86%;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 76px)}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.top-in{max-width:1100px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:10px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:1.1rem;white-space:nowrap;text-decoration:none;color:var(--ink)}
+.mark{width:26px;height:26px;position:relative;flex:none}
+.mark i{position:absolute;width:10px;height:10px;border-radius:50%;background:var(--brand)}
+.mark i:nth-child(1){left:8px;top:0;background:var(--gold)}
+.mark i:nth-child(2){left:0;bottom:0}
+.mark i:nth-child(3){right:0;bottom:0}
+nav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-left:auto;padding:2px}
+nav::-webkit-scrollbar{display:none}
+nav a{flex:none;padding:7px 13px;border-radius:999px;text-decoration:none;color:var(--muted);font-weight:500;font-size:.92rem}
+nav a:hover{background:var(--chip);color:var(--ink)}
+nav a.on{background:var(--brand);color:var(--on-brand)}
+.edit-toggle,.theme-toggle{flex:none;border:2px solid var(--brand);background:transparent;color:var(--brand);border-radius:999px;padding:5px 16px;font-weight:700;cursor:pointer}
+.edit-toggle[aria-pressed="true"]{background:var(--brand);color:var(--on-brand)}
+.theme-toggle{padding:5px 10px;display:grid;place-items:center}
+.theme-toggle svg{width:18px;height:18px}
+@media (max-width:720px){.brand span{display:none}}
+
+/* hero */
+.hero{max-width:1100px;margin:0 auto;padding:56px 20px 40px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(2.2rem,6.4vw,4.4rem);line-height:1.02;letter-spacing:-.02em;margin:0 0 16px;max-width:15ch}
+.hero p{margin:0 0 28px;color:var(--muted);max-width:52ch;font-size:1.05rem}
+.search{display:flex;align-items:center;gap:12px;background:var(--surface);border:2px solid var(--brand);border-radius:16px;padding:6px 8px 6px 18px;max-width:640px}
+.search svg{flex:none;color:var(--brand)}
+.search input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font:inherit;font-size:1.1rem;padding:12px 0;outline:none}
+.search input::placeholder{color:var(--muted)}
+.search:focus-within{box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 55%,transparent)}
+.clear{border:0;background:var(--chip);border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:600;font-size:.9rem}
+.hero .count{margin:12px 0 0;font-size:.92rem}
+
+/* edit tools */
+.tools{max-width:1100px;margin:0 auto 28px;padding:18px 20px;background:var(--chip);border-radius:18px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;width:calc(100% - 40px)}
+.tools p{margin:0 0 4px;flex-basis:100%;color:var(--ink);font-size:.95rem}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:9px 14px;font-weight:600;cursor:pointer}
+.btn:hover{border-color:var(--brand)}
+.btn.primary{background:var(--brand);color:var(--on-brand);border-color:var(--brand)}
+.btn.danger{color:var(--danger);border-color:var(--danger);background:transparent}
+
+/* org tree */
+.tree{max-width:1100px;margin:0 auto;padding:0 20px}
+.level{position:relative;padding:0 0 46px 38px}
+.level::before{content:"";position:absolute;left:6px;top:14px;bottom:-6px;width:2px;background:var(--line)}
+.level::after{content:"";position:absolute;left:0;top:6px;width:14px;height:14px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px var(--bg)}
+.level:last-child::before{display:none}
+.level h2{font-family:var(--display);font-weight:700;font-size:1.7rem;line-height:1.15;margin:0 0 4px;letter-spacing:-.01em}
+.blurb{margin:0 0 20px;color:var(--muted)}
+
+.people{display:grid;gap:14px}
+.people.card{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.people.feature{grid-template-columns:minmax(0,560px)}
+.people.row{grid-template-columns:repeat(auto-fill,minmax(280px,1fr));column-gap:28px;row-gap:0}
+
+.person{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:14px;text-align:left;cursor:pointer;background:none;border:0;padding:0}
+.p-text{display:flex;flex-direction:column;min-width:0}
+.p-name{font-family:var(--display);font-weight:700;line-height:1.2}
+.p-role{color:var(--muted);font-size:.92rem}
+.p-unit{margin-top:6px;align-self:flex-start;background:var(--chip);color:var(--brand);font-size:.8rem;font-weight:600;padding:2px 9px;border-radius:999px;text-align:left}
+
+.p-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;transition:border-color .15s}
+.p-card:hover{border-color:var(--brand)}
+.p-card .av{--s:60px}
+.p-card .p-name{font-size:1.02rem}
+
+.p-feature{background:var(--brand);color:var(--on-brand);border-radius:26px;padding:22px;gap:20px}
+.p-feature .p-name{font-size:1.55rem}
+.p-feature .p-role{color:inherit;opacity:.85;font-size:1rem}
+.p-feature .av{--s:96px;box-shadow:0 0 0 4px var(--gold)}
+
+.p-row{padding:12px 4px;border-bottom:1px solid var(--line);border-radius:0}
+.p-row:hover .p-name{text-decoration:underline;text-underline-offset:3px}
+.p-row .av{--s:46px}
+
+.add{border:2px dashed var(--muted);background:transparent;color:var(--brand);border-radius:16px;padding:16px;min-height:72px;font-weight:700;cursor:pointer}
+.add:hover{background:var(--chip)}
+
+/* avatar */
+.av{position:relative;display:grid;place-items:center;width:var(--s,56px);height:var(--s,56px);flex:none;border-radius:50%;overflow:hidden;
+  background:hsl(var(--h) 40% var(--av-l));color:hsl(var(--h) 50% var(--av-ink-l));
+  font-family:var(--display);font-weight:800;font-size:calc(var(--s,56px)*.36)}
+.av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cam{position:absolute;left:0;right:0;bottom:0;height:36%;background:rgba(0,0,0,.5);display:grid;place-items:center;color:#fff}
+.cam svg{width:42%;height:70%}
+
+.empty{max-width:1100px;margin:0 auto;padding:10px 20px 80px}
+.empty div{background:var(--surface);border:1px dashed var(--muted);border-radius:16px;padding:28px}
+.empty strong{font-family:var(--display);font-size:1.2rem}
+
+/* activities */
+.events{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:56px 0 40px}
+.events-in{max-width:1100px;margin:0 auto;padding:0 20px}
+.events h2{font-family:var(--display);font-weight:800;font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-.02em;margin:0 0 4px}
+.event{margin-top:34px}
+.event-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.event h3{font-family:var(--display);font-size:1.3rem;margin:0}
+.event .meta{color:var(--muted);font-size:.9rem}
+.event p{margin:2px 0 14px;color:var(--muted)}
+.strip{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:12px;margin-right:-20px;padding-right:20px}
+.tile{flex:none;width:210px;aspect-ratio:4/3;border:0;padding:0;border-radius:12px;overflow:hidden;cursor:pointer;scroll-snap-align:start;background:var(--chip)}
+.tile:first-child{width:320px}
+.tile img{width:100%;height:100%;object-fit:cover;display:block}
+.tile:hover img{filter:brightness(1.08)}
+
+footer{max-width:1100px;margin:0 auto;padding:36px 20px 48px;color:var(--muted);font-size:.9rem;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}
+footer strong{color:var(--ink);font-family:var(--display)}
+
+/* dialogs */
+dialog{border:0;padding:0;background:var(--surface);color:var(--ink);border-radius:22px;width:calc(100vw - 32px);max-width:480px;max-height:92vh}
+dialog::backdrop{background:rgba(8,22,19,.6)}
+.d-in{padding:28px;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.d-in .av{--s:112px;margin-bottom:10px;box-shadow:0 0 0 4px var(--gold)}
+.d-in h3{font-family:var(--display);font-size:1.6rem;line-height:1.15;margin:0}
+.d-role{font-weight:600;color:var(--brand)}
+.d-in p{margin:10px 0 0;color:var(--muted)}
+.d-close{margin-top:18px;border:0;border-radius:12px;background:var(--brand);color:var(--on-brand);padding:10px 20px;font-weight:600;cursor:pointer}
+
+.form{display:grid;gap:12px;width:100%}
+.form label{display:grid;gap:4px;font-weight:600;font-size:.9rem}
+.form input[type=text],.form textarea{font:inherit;font-weight:400;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);width:100%}
+.form textarea{min-height:84px;resize:vertical}
+.photo-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.photo-row .av{margin:0}
+.photo-btns{display:grid;gap:8px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.actions .spacer{flex:1}
+.err{color:var(--danger);font-size:.9rem;min-height:1.2em;margin:0}
+
+dialog.lb{max-width:960px;background:#0C1917;color:#fff;border-radius:18px}
+.lb-in{padding:14px;display:grid;gap:10px}
+.lb img{width:100%;max-height:70vh;object-fit:contain;border-radius:10px;background:#000;touch-action:pan-y}
+.lb-bar{display:flex;align-items:center;gap:8px}
+.lb-bar span{flex:1;font-size:.92rem;opacity:.9}
+.lb-bar button{border:0;background:rgba(255,255,255,.14);color:#fff;border-radius:10px;padding:8px 14px;cursor:pointer;font-weight:600}
+.lb-bar button:hover{background:rgba(255,255,255,.26)}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="#top"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span><span id="brandName">Leaders Directory</span></a>
+    <nav id="nav" aria-label="Sections"></nav>
+    <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch between light and dark mode">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+    <button type="button" class="edit-toggle" id="editToggle" aria-pressed="false">Edit</button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <h1>Meet the people who lead our campus.</h1>
+    <p>Search for any official, dean, faculty member, or staff. Or browse by level, from the university down to the people who keep things running every day.</p>
+    <label class="search">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Search by name, position, or college" autocomplete="off" aria-label="Search the directory">
+      <button type="button" class="clear" id="clear" hidden>Clear</button>
+    </label>
+    <p class="count" id="count" aria-live="polite"></p>
+  </section>
+
+  <section class="tools" id="tools" hidden>
+    <p><strong>Edit mode is on.</strong> Click a person to upload their photo or change their details. Use “Add person” to add a new leader. Your changes are saved in this browser only, so use “Export backup” to keep a copy.</p>
+    <button type="button" class="btn primary" id="export">Export backup</button>
+    <button type="button" class="btn" id="import">Import backup</button>
+    <button type="button" class="btn danger" id="reset">Reset to sample data</button>
+    <input type="file" id="importFile" accept="application/json,.json" hidden>
+  </section>
+
+  <div class="tree" id="tree"></div>
+
+  <div class="empty" id="empty" hidden>
+    <div><strong id="empty-title"></strong><p style="margin:6px 0 0;color:var(--muted)">Try another name, position, or college.</p></div>
+  </div>
+
+  <section class="events" id="activities">
+    <div class="events-in">
+      <h2>Activities</h2>
+      <p class="blurb">Photos from school activities. Click a photo to enlarge it.</p>
+      <div id="events"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span><strong id="footTitle">Leaders Directory</strong> &nbsp;<span id="footYear"></span></span>
+  <span id="footBy"></span>
+</footer>
+
+<dialog id="detail" aria-label="Person details"><div class="d-in" id="detail-in"></div></dialog>
+<dialog id="editor" aria-label="Edit person"><div class="d-in" id="editor-in"></div></dialog>
+
+<dialog id="lb" class="lb" aria-label="Photo viewer">
+  <div class="lb-in">
+    <img id="lb-img" alt="">
+    <div class="lb-bar">
+      <button type="button" id="lb-prev" aria-label="Previous photo">Prev</button>
+      <button type="button" id="lb-next" aria-label="Next photo">Next</button>
+      <span id="lb-cap"></span>
+      <button type="button" id="lb-close">Close</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+/* ============================================================
+   1. SETTINGS. Change these first.
+   ============================================================ */
+const SITE = {
+  title: "Leaders Directory",
+  year:  "School Year 2026–2027",
+  madeBy:"Made by [Divine Grace Sampiano]"
+};
+/* Folder where your pictures are. Use "" if they sit beside this file,
+   or something like "images/" (with the slash) if they are in a folder. */
+const PHOTO_DIR = "";
+
+/* Bump this number whenever you change DEFAULTS below, so browsers that
+   already saved an older copy load your new data instead. */
+const DATA_VERSION = 2;
+
+/* ============================================================
+   2. LEADERS. variant: "feature" | "card" | "row"
+   Click "Edit" on the page to change names and upload photos.
+   ============================================================ */
+const DEFAULTS = [
+  { id:"university", label:"University", variant:"feature",
+    blurb:"Leading the whole university.",
+    people:[
+      { name:"Dr. Nordy Siason, Jr.", role:"University President", unit:"", photo:"hihi.jpg",
+        bio:"Replace this with a short description of the University President's role." }
+    ]},
+  { id:"campus", label:"Campus", variant:"card",
+    blurb:"The people who manage and support campus operations.",
+    people:[
+      { name:"Michael B. Dizon", role:"Campus Administrator", unit:"", photo:"mic.jpg", bio:"" },
+      { name:"Melby P. Parreño", role:"Administrative Officer", unit:"", photo:"mel.jpg", bio:"" }
+    ]},
+  { id:"deans", label:"Deans", variant:"card",
+    blurb:"The leaders of each college.",
+    people:[
+      { name:"Rene T. Estomo", role:"Dean", unit:"College of Education", photo:"rene.jpg", bio:"" },
+      { name:"Noli L. Gerona", role:"Dean", unit:"College of Agriculture", photo:"noli.jpg", bio:"" },
+      { name:"Janice H. Ching", role:"Dean", unit:"College of Business, Management and Sustainable Development", photo:"ching.jpg", bio:"" },
+      { name:"Wenda D. Panes", role:"Dean", unit:"College of Information Technology", photo:"hay.jpg", bio:"" }
+    ]},
+  { id:"faculty", label:"Faculty", variant:"row",
+    blurb:"Educators guiding future professionals.",
+    people:[
+      { name:"Dr. Wenna J. Bulnes", role:"CICI Faculty", unit:"College of Information Technology", photo:"wen.jpg", bio:"" },
+      { name:"Dr. Analiza G. Alingalan", role:"CICI Faculty", unit:"College of Information Technology", photo:"an.jpg", bio:"" },
+      { name:"Dr. Dytnne P. Dacudao", role:"CICI Faculty", unit:"College of Information Technology", photo:"dyt.jpg", bio:"" },
+      { name:"Dr. Ian P. Sugatan", role:"CICI Faculty", unit:"College of Information Technology", photo:"iann.jpg", bio:"" },
+      { name:"Instr. Dave Allan A. Tagacay", role:"Faculty", unit:"College of Information Technology", photo:"tags.jpg", bio:"" },
+      { name:"Instr. Ivan Silvestre", role:"Faculty", unit:"College of Information Technology", photo:"van.jpg", bio:"" }
+    ]},
+  { id:"staff", label:"Staff", variant:"row",
+    blurb:"The people who support the college every day.",
+    people:[
+      { name:"Andrea P. Delos Santos", role:"CICI Staff", unit:"College of Information Technology", photo:"andrea.jpg", bio:"" },
+      { name:"Jay Michael O. Borcillo", role:"CICI Staff", unit:"College of Information Technology", photo:"hayy.jpg", bio:"" },
+      { name:"Dwayne Padernal", role:"CICI Staff", unit:"College of Information Technology", photo:"dyyy.jpg", bio:"" }
+    ]}
+];
+
+/* ============================================================
+   3. ACTIVITY PHOTOS. Every filename needs quotes.
+   If a file is missing, a placeholder is shown instead of a broken image.
+   If "photos" is empty, "count" placeholders are shown.
+   ============================================================ */
+const EVENTS = [
+  { title:"Campus Acquaintance Party", blurb:"Moments from the Campus Acquaintance Party.",
+    photos:["ah.jpg","eh.jpg","ih.jpg","oh.jpg","uh.jpg", "ba.jpg"], count:9 },
+  { title:"College Acquaintance Party", blurb:"Moments from the College Acquaintance Party.",
+    photos:["aa.jpg", "ee.jpg", "ii.jpg", "oo.jpg", "uu.jpg", "sh.jpg"], count:7 }
+];
+
+/* ============================ storage ============================ */
+const KEY = "leaders-directory-v" + DATA_VERSION;
+const THEME_KEY = "leaders-directory-theme";
+const clone = o => JSON.parse(JSON.stringify(o));
+function valid(j){
+  return Array.isArray(j) && j.every(s => s && typeof s.id==="string" && typeof s.label==="string" && Array.isArray(s.people));
+}
+function load(){
+  try{
+    const s = localStorage.getItem(KEY);
+    if(s){ const j = JSON.parse(s); if(valid(j)) return j; }
+  }catch(e){}
+  return clone(DEFAULTS);
+}
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(data)); return true; }
+  catch(e){ alert("Could not save. The browser storage is full or blocked. Use “Export backup” to keep your work."); return false; }
+}
+let data = load();
+let editMode = false;
+
+/* ============================ helpers ============================ */
+const $ = (s, r=document) => r.querySelector(s);
+function el(tag, cls, text){ const e=document.createElement(tag); if(cls) e.className=cls; if(text!=null) e.textContent=text; return e; }
+const norm = s => String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+function initials(name){
+  const base = name.split(",")[0].replace(/\b(Dr|Instr|Engr|Prof|Atty|Mr|Ms|Mrs)\.?\s/gi,"").trim();
+  const w = base.split(/\s+/).filter(Boolean);
+  return ((w[0]||"")[0]||"") + (w.length>1 ? w[w.length-1][0] : "");
+}
+function hue(str){ let h=0; for(const c of str) h=(h*31+c.charCodeAt(0))%360; return h; }
+/* adds PHOTO_DIR to plain filenames; leaves links and uploaded photos alone */
+function src(path){
+  if(!path) return "";
+  return /^(https?:|data:|blob:|\/|\.\/|\.\.\/)/i.test(path) || path.includes("/") ? path : PHOTO_DIR + path;
+}
+const CAM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>';
+function avatar(p, withCam){
+  const wrap = el("span","av");
+  wrap.style.setProperty("--h", hue(p.name||"?"));
+  wrap.appendChild(el("span",null,initials(p.name||"?").toUpperCase()));
+  if(p.photo){
+    const img = new Image(); img.alt=""; img.loading="lazy"; img.decoding="async";
+    img.onerror = () => img.remove();   /* keeps the initials if the file is missing */
+    img.src = src(p.photo);
+    wrap.appendChild(img);
+  }
+  if(withCam){ const c = el("span","cam"); c.innerHTML = CAM; wrap.appendChild(c); }
+  return wrap;
+}
+/* crops to a square and shrinks the picture so it saves small */
+function readImage(file){
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onerror = () => reject(new Error("read"));
+    fr.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("img"));
+      img.onload = () => {
+        const S = 400, c = document.createElement("canvas");
+        c.width = c.height = S;
+        const m = Math.min(img.width, img.height);
+        const sx = (img.width - m) / 2, sy = (img.height - m) * 0.2;
+        c.getContext("2d").drawImage(img, sx, sy, m, m, 0, 0, S, S);
+        resolve(c.toDataURL("image/jpeg", 0.85));
+      };
+      img.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+function placeholder(i, title, w, h){
+  const h1 = (i*47 + hue(title)) % 360;
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 ${w} ${h}'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='hsl(${h1} 45% 62%)'/><stop offset='1' stop-color='hsl(${(h1+40)%360} 50% 38%)'/></linearGradient></defs><rect width='100%' height='100%' fill='url(#g)'/><text x='50%' y='50%' text-anchor='middle' dominant-baseline='middle' font-family='sans-serif' font-size='${Math.round(w/14)}' fill='white' fill-opacity='.85'>Photo ${i+1}</text></svg>`;
+  return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+}
+
+/* ============================ page text + theme ============================ */
+document.title = SITE.title;
+$("#brandName").textContent = SITE.title;
+$("#footTitle").textContent = SITE.title;
+$("#footYear").textContent = SITE.year;
+$("#footBy").textContent = SITE.madeBy;
+
+const root = document.documentElement;
+try{ const t = localStorage.getItem(THEME_KEY); if(t==="light"||t==="dark") root.dataset.theme = t; }catch(e){}
+$("#themeToggle").addEventListener("click", () => {
+  const now = root.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  const next = now === "dark" ? "light" : "dark";
+  root.dataset.theme = next;
+  try{ localStorage.setItem(THEME_KEY, next); }catch(e){}
+});
+
+/* ============================ render ============================ */
+const tree = $("#tree"), nav = $("#nav"), tools = $("#tools");
+let total = 0;
+const io = new IntersectionObserver(es => {
+  const links = [...nav.querySelectorAll("a")];
+  es.forEach(e => { if(e.isIntersecting) links.forEach(a => a.classList.toggle("on", a.hash === "#"+e.target.id)); });
+}, { rootMargin:"-30% 0px -60% 0px" });
+
+function render(){
+  tree.replaceChildren(); nav.replaceChildren(); io.disconnect();
+  total = 0;
+  data.forEach(sec => {
+    const variant = sec.variant || "card";
+    const lvl = el("section","level"); lvl.id = sec.id;
+    const grid = el("div","people "+variant);
+    sec.people.forEach((p, idx) => {
+      total++;
+      const btn = el("button","person p-"+variant); btn.type="button";
+      btn._hay = norm([p.name,p.role,p.unit||"",sec.label].join(" "));
+      btn.appendChild(avatar(p, editMode));
+      const t = el("span","p-text");
+      t.appendChild(el("span","p-name",p.name));
+      t.appendChild(el("span","p-role",p.role));
+      if(p.unit && variant==="card") t.appendChild(el("span","p-unit",p.unit));
+      if(p.unit && variant==="row") t.appendChild(el("span","p-role",p.unit));
+      btn.appendChild(t);
+      btn.addEventListener("click", () => editMode ? openEditor(sec, idx) : openPerson(p, sec));
+      grid.appendChild(btn);
+    });
+    if(editMode){
+      const add = el("button","add","+ Add person"); add.type="button";
+      add.addEventListener("click", () => openEditor(sec, -1));
+      grid.appendChild(add);
+    }
+    lvl.append(el("h2",null,sec.label), el("p","blurb",sec.blurb||""), grid);
+    tree.appendChild(lvl);
+    const a = el("a",null,sec.label); a.href = "#"+sec.id; nav.appendChild(a);
+  });
+  const act = el("a",null,"Activities"); act.href = "#activities"; nav.appendChild(act);
+  document.querySelectorAll(".level, #activities").forEach(n => io.observe(n));
+  tools.hidden = !editMode;
+  applyFilter();
+}
+
+/* ============================ search ============================ */
+const q = $("#q"), count = $("#count"), empty = $("#empty"), eventsBox = $("#activities"), clearBtn = $("#clear");
+function applyFilter(){
+  const raw = q.value.trim();
+  const terms = norm(raw).split(/\s+/).filter(Boolean);   /* every word must match, accents ignored */
+  const term = terms.length > 0;
+  let shown = 0;
+  document.querySelectorAll(".level").forEach(l => {
+    let n = 0;
+    l.querySelectorAll(".person").forEach(b => { const ok = !term || terms.every(t => b._hay.includes(t)); b.hidden = !ok; if(ok) n++; });
+    l.querySelectorAll(".add").forEach(b => b.hidden = term);
+    l.hidden = n === 0 && !(editMode && !term);
+    shown += n;
+  });
+  eventsBox.hidden = term;
+  empty.hidden = shown !== 0 || (editMode && !term);
+  clearBtn.hidden = !term;
+  $("#empty-title").textContent = shown ? "" : (term ? `No results for “${raw}”.` : "No leaders yet.");
+  count.textContent = term ? `${shown} of ${total} match` : `${total} people in the directory`;
+}
+q.addEventListener("input", applyFilter);
+clearBtn.addEventListener("click", () => { q.value=""; applyFilter(); q.focus(); });
+
+/* ============================ view dialog ============================ */
+const detail = $("#detail"), detailIn = $("#detail-in");
+function openPerson(p, sec){
+  detailIn.replaceChildren();
+  detailIn.appendChild(avatar(p));
+  detailIn.appendChild(el("h3",null,p.name));
+  detailIn.appendChild(el("span","d-role", p.unit ? `${p.role}, ${p.unit}` : p.role));
+  detailIn.appendChild(el("p",null, p.bio || `Part of ${sec.label} in the Leaders Directory.`));
+  const c = el("button","d-close","Close"); c.type="button"; c.addEventListener("click", () => detail.close());
+  detailIn.appendChild(c);
+  detail.showModal();
+}
+detail.addEventListener("click", e => { if(e.target === detail) detail.close(); });
+
+/* ============================ edit dialog ============================ */
+const editor = $("#editor"), editorIn = $("#editor-in");
+function field(label, input){ const l = el("label",null,label); l.appendChild(input); return l; }
+function textInput(value, placeholder){
+  const i = el("input"); i.type = "text"; i.value = value || ""; i.placeholder = placeholder || ""; return i;
+}
+function openEditor(sec, idx){
+  const isNew = idx === -1;
+  const draft = isNew ? { name:"", role:"", unit:"", photo:"", bio:"" } : Object.assign({ unit:"", bio:"", photo:"" }, sec.people[idx]);
+  editorIn.replaceChildren();
+  editorIn.appendChild(el("h3",null, isNew ? `Add to ${sec.label}` : "Edit leader"));
+
+  const form = el("div","form");
+  const err = el("p","err");
+
+  /* photo */
+  const row = el("div","photo-row");
+  const slot = el("div");
+  const paint = () => slot.replaceChildren(avatar(draft));
+  paint();
+  const btns = el("div","photo-btns");
+  const file = el("input"); file.type = "file"; file.accept = "image/*"; file.hidden = true;
+  const up = el("button","btn primary","Upload photo"); up.type = "button";
+  const rm = el("button","btn","Remove photo"); rm.type = "button";
+  const refreshRm = () => { rm.hidden = !draft.photo; up.textContent = draft.photo ? "Change photo" : "Upload photo"; };
+  refreshRm();
+  up.addEventListener("click", () => file.click());
+  rm.addEventListener("click", () => { draft.photo = ""; paint(); refreshRm(); });
+  file.addEventListener("change", async () => {
+    const f = file.files[0]; if(!f) return;
+    try{ draft.photo = await readImage(f); paint(); refreshRm(); err.textContent = ""; }
+    catch(e){ err.textContent = "That file could not be read as a picture. Try a JPG or PNG."; }
+    file.value = "";
+  });
+  btns.append(up, rm, file);
+  row.append(slot, btns);
+
+  /* text fields */
+  const nameI = textInput(draft.name, "Full name, e.g. Juan Dela Cruz, PhD");
+  nameI.addEventListener("input", () => { draft.name = nameI.value; paint(); });
+  const roleI = textInput(draft.role, "e.g. Dean");
+  const unitI = textInput(draft.unit, "e.g. College of Education (optional)");
+  const bioI = el("textarea"); bioI.value = draft.bio || ""; bioI.placeholder = "Short description (optional)";
+
+  /* actions */
+  const actions = el("div","actions");
+  const saveB = el("button","btn primary","Save"); saveB.type = "button";
+  const cancelB = el("button","btn","Cancel"); cancelB.type = "button";
+  actions.append(saveB, cancelB);
+  cancelB.addEventListener("click", () => editor.close());
+  saveB.addEventListener("click", () => {
+    const name = nameI.value.trim();
+    if(!name){ err.textContent = "Please enter a name."; nameI.focus(); return; }
+    const out = { name, role: roleI.value.trim(), unit: unitI.value.trim(), bio: bioI.value.trim(), photo: draft.photo };
+    if(isNew) sec.people.push(out); else sec.people[idx] = out;
+    save(); render(); editor.close();
+  });
+  if(!isNew){
+    /* move a person earlier or later in the list */
+    const move = (d, label) => {
+      const b = el("button","btn",label); b.type = "button";
+      const j = idx + d;
+      if(j < 0 || j >= sec.people.length){ b.disabled = true; b.style.opacity = ".45"; }
+      b.addEventListener("click", () => {
+        [sec.people[idx], sec.people[j]] = [sec.people[j], sec.people[idx]];
+        save(); render(); editor.close();
+      });
+      return b;
+    };
+    actions.append(move(-1,"Move up"), move(1,"Move down"));
+    actions.appendChild(el("span","spacer"));
+    const del = el("button","btn danger","Delete"); del.type = "button";
+    del.addEventListener("click", () => {
+      if(confirm(`Remove ${sec.people[idx].name} from the directory?`)){ sec.people.splice(idx,1); save(); render(); editor.close(); }
+    });
+    actions.appendChild(del);
+  }
+
+  form.append(row, field("Name", nameI), field("Position", roleI), field("College or office", unitI), field("About", bioI), err, actions);
+  editorIn.appendChild(form);
+  editor.showModal();
+}
+editor.addEventListener("click", e => { if(e.target === editor) editor.close(); });
+
+/* ============================ edit mode + backup ============================ */
+const toggle = $("#editToggle");
+toggle.addEventListener("click", () => {
+  editMode = !editMode;
+  toggle.setAttribute("aria-pressed", String(editMode));
+  toggle.textContent = editMode ? "Done" : "Edit";
+  render();
+});
+$("#export").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(data)], { type:"application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "leaders-directory-backup.json";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+$("#import").addEventListener("click", () => $("#importFile").click());
+$("#importFile").addEventListener("change", async e => {
+  const f = e.target.files[0]; if(!f) return;
+  try{
+    const j = JSON.parse(await f.text());
+    if(!valid(j)) throw new Error("bad");
+    data = j; save(); render();
+  }catch(_){ alert("That file is not a valid backup."); }
+  e.target.value = "";
+});
+$("#reset").addEventListener("click", () => {
+  if(confirm("Reset everything to the sample data? All uploaded photos and edits will be removed.")){
+    data = clone(DEFAULTS); save(); render();
+  }
+});
+
+/* ============================ activities + lightbox ============================ */
+const lb = $("#lb"), lbImg = $("#lb-img"), lbCap = $("#lb-cap");
+let cur = { list:[], i:0, title:"" };
+function showLB(){
+  lbImg.src = cur.list[cur.i];
+  lbImg.alt = `${cur.title}, photo ${cur.i+1}`;
+  lbCap.textContent = `${cur.i+1} / ${cur.list.length}`;
+  /* preload the neighbours so Next and Prev feel instant */
+  [1,-1].forEach(d => { new Image().src = cur.list[(cur.i + d + cur.list.length) % cur.list.length]; });
+}
+function stepLB(d){ cur.i = (cur.i + d + cur.list.length) % cur.list.length; showLB(); }
+$("#lb-prev").addEventListener("click", () => stepLB(-1));
+$("#lb-next").addEventListener("click", () => stepLB(1));
+$("#lb-close").addEventListener("click", () => lb.close());
+lb.addEventListener("click", e => { if(e.target === lb) lb.close(); });
+lb.addEventListener("keydown", e => { if(e.key==="ArrowLeft") stepLB(-1); if(e.key==="ArrowRight") stepLB(1); });
+lb.addEventListener("close", () => { lbImg.removeAttribute("src"); });
+/* swipe left or right on a phone */
+let sx = null;
+lbImg.addEventListener("touchstart", e => { sx = e.touches[0].clientX; }, { passive:true });
+lbImg.addEventListener("touchend", e => {
+  if(sx === null) return;
+  const dx = e.changedTouches[0].clientX - sx; sx = null;
+  if(Math.abs(dx) > 50) stepLB(dx < 0 ? 1 : -1);
+}, { passive:true });
+
+const evBox = $("#events");
+EVENTS.forEach(ev => {
+  const real = ev.photos.length > 0;
+  const list = real ? ev.photos.map(src) : Array.from({length:ev.count}, (_,i) => placeholder(i, ev.title, 1200, 800));
+  const wrap = el("div","event");
+  const head = el("div","event-head");
+  head.append(el("h3",null,ev.title), el("span","meta",`${list.length} photo${list.length===1?"":"s"}`));
+  const strip = el("div","strip");
+  list.forEach((s,i) => {
+    const t = el("button","tile"); t.type="button"; t.setAttribute("aria-label", `Open photo ${i+1} of ${ev.title}`);
+    const img = new Image(); img.alt = ""; img.loading = "lazy"; img.decoding = "async";
+    img.onerror = () => {   /* missing file: swap in a placeholder everywhere it is used */
+      const ph = placeholder(i, ev.title, 1200, 800);
+      list[i] = ph; img.onerror = null; img.src = ph;
+    };
+    img.src = s;
+    t.appendChild(img);
+    t.addEventListener("click", () => { cur = { list, i, title: ev.title }; showLB(); lb.showModal(); });
+    strip.appendChild(t);
+  });
+  wrap.append(head, el("p",null,ev.blurb), strip);
+  evBox.appendChild(wrap);
+});
+
+render();
+</script>
+</body>
+</html>
